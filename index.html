@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SurveyX Owner Dashboard</title>
+    <style>
+        body { font-family: sans-serif; padding: 40px; background: #f4f7f6; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 400px; }
+        .status { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>SurveyX Bridge Status</h2>
+        <p id="loading">Connecting to sandbox...</p>
+        <div id="content" style="display:none;">
+            <p>Status: <span class="status" id="status"></span></p>
+            <p>Message: <i id="message"></i></p>
+            <p><small>Last Checked: <span id="time"></span></small></p>
+        </div>
+    </div>
+
+    <script>
+        // We fetch the JSON file from the same folder
+        fetch('./hello.json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+                document.getElementById('status').innerText = data.status;
+                document.getElementById('message').innerText = data.message;
+                document.getElementById('time').innerText = data.timestamp;
+            })
+            .catch(err => {
+                document.getElementById('loading').innerText = 'Error connecting to sandbox.';
+                console.error(err);
+            });
+    </script>
+</body>
+</html>
