@@ -1,0 +1,31 @@
+name: Check Decipher Status
+on:
+  workflow_dispatch: # This lets you trigger it manually
+    inputs:
+      survey_path:
+        description: 'Decipher Survey Path'
+        required: true
+        default: 'selfserve/c84/2605120'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Allows GitHub to update the JSON file
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Call Decipher API
+        run: |
+          curl -X GET "https://newtonx.decipherinc.com/api/v1/rh/surveys/${{ github.event.inputs.survey_path }}" \
+               -H "x-apikey: ${{ secrets.DECIPHER_API_KEY }}" \
+               -o status.json
+
+      - name: Commit Status
+        run: |
+          git config user.name "SurveyBot"
+          git config user.email "bot@github.com"
+          git add status.json
+          git commit -m "Updated survey status for ${{ github.event.inputs.survey_path }}"
+          git push
